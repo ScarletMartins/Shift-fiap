@@ -28,9 +28,14 @@ public class Automovel {
     @Enumerated(EnumType.STRING) //indica que é uma Enum e que deve ser armazenado o texto
     private TipoCombustivelEnum tipoCombustivel;
 
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "ID_MODELO") //indica qual a coluna de ligação - Foreing Key
     private Modelo modelo;
 
-    @Transient
+    @ManyToMany
+    //ManyToMany precisa mapear a tabela de relação, informando qual a tabela e quais as colunas de FK
+    @JoinTable(name = "TBL_REL_AUTOMOVEL_ACESSORIO",
+    joinColumns = @JoinColumn(name = "ID_AUTOMOVEL"),
+    inverseJoinColumns = @JoinColumn(name = "ID_ACESSORIO"))
     private List<Acessorio> acessorios;
 }

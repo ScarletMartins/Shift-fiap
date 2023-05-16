@@ -23,6 +23,7 @@ public class Modelo {
     @Column(name = "NR_POTENCIA")
     private BigDecimal potencia;
 
-    @Transient //marca um atributo como nao persistente / não mapea o atributo como coluna no db
+    @ManyToOne
+    @JoinColumn(name = "ID_MARCA")
     private Marca marca;
 }
