@@ -32,14 +32,14 @@ public class ModeloController {
 
     @PostMapping
     public ResponseEntity<Modelo> insert(@RequestBody Modelo modelo) {
-
         Modelo saved = modeloRepository.save(modelo);
         return ResponseEntity.ok(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Modelo> update(@PathVariable Long id, @RequestBody Modelo modelo) {
-        if (!modeloRepository.existsById(id)) {
+        Optional<Modelo> result = modeloRepository.findById(id);
+        if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Modelo updated = modeloRepository.save(modelo);
