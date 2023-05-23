@@ -32,9 +32,12 @@ public class MarcaController {
 
     @PostMapping
     public ResponseEntity<Marca> insert(@RequestBody Marca marca) {
-
-        Marca saved = marcaRepository.save(marca);
-        return ResponseEntity.ok(saved);
+        var exists = marcaRepository.findByNomeIgnoreCase(marca.getNome());
+        if (exists.isEmpty()) {
+            Marca saved = marcaRepository.save(marca);
+            return ResponseEntity.ok(saved);
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{id}")
