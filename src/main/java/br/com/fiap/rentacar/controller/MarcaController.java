@@ -3,12 +3,8 @@ package br.com.fiap.rentacar.controller;
 import br.com.fiap.rentacar.entity.Marca;
 import br.com.fiap.rentacar.repository.MarcaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +24,37 @@ public class MarcaController {
     @GetMapping("/{id}")
     public ResponseEntity<Marca> findById(@PathVariable Long id) {
         Optional<Marca> result = marcaRepository.findById(id);
-
+        if (result.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(result.get());
+    }
+
+    @PostMapping
+    public ResponseEntity<Marca> insert(@RequestBody Marca marca) {
+
+        Marca saved = marcaRepository.save(marca);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Marca> update(@PathVariable Long id, @RequestBody Marca marca) {
+        //Optional<Marca> result = marcaRepository.findById(id);
+        //if(result.isEmpty())
+        if (!marcaRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        Marca updated = marcaRepository.save(marca);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Marca> delete(@PathVariable Long id) {
+        Optional<Marca> result = marcaRepository.findById(id);
+        if (result.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        marcaRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
