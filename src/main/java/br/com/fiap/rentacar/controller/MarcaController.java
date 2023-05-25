@@ -2,6 +2,7 @@ package br.com.fiap.rentacar.controller;
 
 import br.com.fiap.rentacar.entity.Marca;
 import br.com.fiap.rentacar.repository.MarcaRepository;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/marcas")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class MarcaController {
 
     @Autowired //atribui ao Spring a responsabilidade de instanciar o objeto Repository
@@ -42,12 +44,15 @@ public class MarcaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Marca> update(@PathVariable Long id, @RequestBody Marca marca) {
-        //Optional<Marca> result = marcaRepository.findById(id);
-        //if(result.isEmpty())
+        var exists = marcaRepository.findByNomeIgnoreCaseAndIdNot(marca.getNome(), id);
+        if (!exists.isEmpty()) {
+            return ResponseEntity.badRequest().build(); }
+        //var result = repository.findById(id);
+        // if (result.isEmpty()) {
         if (!marcaRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        Marca updated = marcaRepository.save(marca);
+        var updated = marcaRepository.save(marca);
         return ResponseEntity.ok(updated);
     }
 
@@ -57,6 +62,12 @@ public class MarcaController {
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        var exists = marcaRepository.findModelos(id);
+        if (!exists.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         marcaRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
