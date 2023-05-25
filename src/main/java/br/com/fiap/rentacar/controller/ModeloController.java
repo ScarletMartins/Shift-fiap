@@ -32,12 +32,21 @@ public class ModeloController {
 
     @PostMapping
     public ResponseEntity<Modelo> insert(@RequestBody Modelo modelo) {
+        var exists = modeloRepository.findByPotenciaAndNomeIgnoreCase(modelo.getPotencia(), modelo.getNome());
+        if (!exists.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
         Modelo saved = modeloRepository.save(modelo);
         return ResponseEntity.ok(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Modelo> update(@PathVariable Long id, @RequestBody Modelo modelo) {
+        var exists = modeloRepository.findByPotenciaAndNomeIgnoreCaseAndIdNot(modelo.getPotencia(), modelo.getNome(), id);
+        if (!exists.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         Optional<Modelo> result = modeloRepository.findById(id);
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
